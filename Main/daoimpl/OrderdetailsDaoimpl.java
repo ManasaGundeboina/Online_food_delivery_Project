@@ -31,7 +31,7 @@ public class OrderdetailsDaoimpl implements OrderDetailsDAO {
 
 	public List<OrderDetails> findAll() {
 		try (Session session = Hibernateutil.getSession()) {
-			List<OrderDetails> orerdetails = session.createQuery("from orerdetails", OrderDetails.class)
+			List<OrderDetails> orerdetails = session.createQuery("from OrderDetails", OrderDetails.class)
 					.getResultList();
 			return orerdetails;
 
@@ -42,42 +42,6 @@ public class OrderdetailsDaoimpl implements OrderDetailsDAO {
 		}
 		return null;
 	}
-
-	public List<OrderDetails> findeorderDetailsByOrderId(int orderId) {
-		try (Session session = Hibernateutil.getSession()) {
-			session.beginTransaction();
-			String sqlQurey = "SELECT * FROM OrderDetails WHERE orderId = : orderId ";
-			List<OrderDetails> orderdetails = session.createNativeQuery(sqlQurey, OrderDetails.class)
-					.setParameter("OrderId", orderId).getResultList();
-			session.getTransaction().commit();
-
-			return orderdetails;
-		} catch (HibernateException e) {
-			System.out.println("Hibernate exception is: " + e);
-		} catch (Exception e) {
-			System.out.println("Exception is: " + e);
-		}
-		return null;
-	}
-	
-	//productName
-	public List<OrderDetails> findeorderDetailsByProductName(String productName) {
-		try (Session session = Hibernateutil.getSession()) {
-			session.beginTransaction();
-			String sqlQurey = "SELECT * FROM OrderDetails WHERE productName = : productName ";
-			List<OrderDetails> orderdetails = session.createNativeQuery(sqlQurey, OrderDetails.class)
-					.setParameter("Productname", productName).getResultList();
-			session.getTransaction().commit();
-
-			return orderdetails;
-		} catch (HibernateException e) {
-			System.out.println("Hibernate exception is: " + e);
-		} catch (Exception e) {
-			System.out.println("Exception is: " + e);
-		}
-		return null;
-	}
-	
 
 	public OrderDetails findeorderDetailsById(int id) {
 		try (Session session = Hibernateutil.getSession()) {
@@ -92,17 +56,43 @@ public class OrderdetailsDaoimpl implements OrderDetailsDAO {
 		return null;
 	}
 
-	public boolean updateOrderDetailsById(int id, OrderDetails orderdetails) {
+	public List<OrderDetails> findorderDetailsByordersId(int orderId) {
 		try (Session session = Hibernateutil.getSession()) {
-			OrderDetails existOrderDetails = session.load(OrderDetails.class, id);
-			// update existing details with the new one
-			existOrderDetails.setorderDetailsId(orderdetails.getorderDetailsId());
-			existOrderDetails.setquantity(orderdetails.getquantity());
-
 			session.beginTransaction();
-			session.saveOrUpdate(existOrderDetails);
+			String sqlQuery = "SELECT * FROM orderDetails WHERE OrderDetailsId = :orderId ";
+
+			List<OrderDetails> orderDetails = session.createNativeQuery(sqlQuery, OrderDetails.class)
+					.setParameter("orderId", orderId).getResultList();
+
 			session.getTransaction().commit();
-			return true;
+
+			return orderDetails;
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	public boolean updateOrderDetailsById(int orderDetailsId, int quantity, Orders order, FoodProduct foodProduct) {
+		try (Session session = Hibernateutil.getSession()) {
+			session.beginTransaction();
+			OrderDetails existOrderDetails = session.load(OrderDetails.class, orderDetailsId);
+			if (existOrderDetails != null) {
+				// update existing details with the new one
+				existOrderDetails.setorderDetailsId(orderDetailsId);
+				existOrderDetails.setquantity(quantity);
+				existOrderDetails.setOrders(order);
+				existOrderDetails.setFoodProduct(foodProduct);
+				session.update(existOrderDetails);
+				session.getTransaction().commit();
+				System.out.println("OrderDetailsId with ID " + orderDetailsId + " updated successfully.");
+				return true;
+			} else {
+				System.out.println("OrderDetailsId with ID " + orderDetailsId + " does not exist.");
+			}
 
 		} catch (HibernateException e) {
 			System.out.println("Hibernate exception is: " + e);
@@ -115,10 +105,11 @@ public class OrderdetailsDaoimpl implements OrderDetailsDAO {
 
 	public boolean removeOrderDetailsById(int id) {
 		try (Session session = Hibernateutil.getSession()) {
-			Orders order = session.get(Orders.class, id);
+			OrderDetails orderdetails = session.get(OrderDetails.class, id);
 			session.beginTransaction();
-			if (order != null) {
-				session.delete(order);
+			if (orderdetails != null) {
+				orderdetails.setStatus('I');
+				session.saveOrUpdate(orderdetails);
 			} else {
 				System.out.println("FoodCategory details not found!");
 			}
@@ -131,6 +122,26 @@ public class OrderdetailsDaoimpl implements OrderDetailsDAO {
 		}
 		return false;
 
+	}
+
+	@Override
+	public List<OrderDetails> findorderDetailsByfoodProductsId(int foodProductId) {
+		try (Session session = Hibernateutil.getSession()) {
+			session.beginTransaction();
+			String sqlQuery = "SELECT * FROM OrderDetails WHERE OrderDetailsId = :foodProductId ";
+
+			List<OrderDetails> orderDetails = session.createNativeQuery(sqlQuery, OrderDetails.class)
+					.setParameter("foodProductId", foodProductId).getResultList();
+
+			session.getTransaction().commit();
+
+			return orderDetails;
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

@@ -55,14 +55,15 @@ public class FoodCategoryDaoimpl implements FoodCategoryDAO {
 
 	public boolean updateFoodCategory(int id, String foodCategory) {
 		try (Session session = Hibernateutil.getSession()) {
+			session.beginTransaction();
 			FoodCategory existFoodCategory = session.load(FoodCategory.class, id);
 			if (existFoodCategory != null) {
 			// update existing details with the new one
-			existFoodCategory.setfoodCategoryId(existFoodCategory.getfoodCategoryId());
-			existFoodCategory.setcategoryName(existFoodCategory.getcategoryName());
+			existFoodCategory.setfoodCategoryId(id);
+			existFoodCategory.setcategoryName(foodCategory);
 
-			session.beginTransaction();
-			session.saveOrUpdate(existFoodCategory);
+			
+			session.update(existFoodCategory);
 			session.getTransaction().commit();
 			System.out.println("foodCategory with ID " + id + " updated successfully.");
 			return true;
@@ -82,7 +83,8 @@ public class FoodCategoryDaoimpl implements FoodCategoryDAO {
 			FoodCategory cust = session.get(FoodCategory.class, id);
 			session.beginTransaction();
 			if (cust != null) {
-				session.delete(cust);
+				cust.setStatus('I');
+				session.saveOrUpdate(cust);
 			} else {
 				System.out.println("FoodCategory details not found!");
 			}
@@ -97,20 +99,4 @@ public class FoodCategoryDaoimpl implements FoodCategoryDAO {
 		return false;
 	}
 
-	@Override
-	public List<FoodProduct> getfoodProductBycategoryname(String categoryname) {
-		try (Session session = Hibernateutil.getSession()) {
-			String sqlQuery = "SELECT * FROM onlinefooddelivery.foodcategory c, onlinefooddelivery.foodproduct p where c.categoryName= : categoryname";
-
-			List<FoodProduct> foodproducts = session.createNativeQuery(sqlQuery, FoodProduct.class)
-					.setParameter("categoryName", categoryname).getResultList();
-
-			return foodproducts;
-		} catch (HibernateException e) {
-			System.out.println("Hibernate exception is: " + e);
-		} catch (Exception e) {
-			System.out.println("Exception is: " + e);
-		}
-		return null;
-	}
 }

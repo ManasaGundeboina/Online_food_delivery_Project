@@ -53,20 +53,20 @@ public class CustomerDaoimpl implements CustomerDAO {
 
 	public boolean updateCustomer(int custId, String custName, String address, String mobileNo) {
 		try (Session session = Hibernateutil.getSession()) {
+			session.beginTransaction();
 			Customer existCust = session.load(Customer.class, custId);
 			if (existCust != null) {
-			// update existing details with the new one
-			existCust.setCustId(existCust.getCustId());
-			existCust.setcustName(existCust.getcustName());
-			existCust.setMobileNo(existCust.getMobileNo());
-			existCust.setAddress(existCust.getAddress());
+				// update existing details with the new one
+				existCust.setCustId(custId);
+				existCust.setcustName(custName);
+				existCust.setMobileNo(mobileNo);
+				existCust.setAddress(address);
 
-			session.beginTransaction();
-			session.saveOrUpdate(existCust);
-			session.getTransaction().commit();
-			System.out.println("Customer with ID " + custId + " updated successfully.");
+				session.update(existCust);
+				session.getTransaction().commit();
+				System.out.println("Customer with ID " + custId + " updated successfully.");
 				return true;
-				}else {
+			} else {
 				System.out.println("Customer with ID " + custId + " does not exist.");
 			}
 		} catch (HibernateException e) {
@@ -82,12 +82,14 @@ public class CustomerDaoimpl implements CustomerDAO {
 			Customer cust = session.get(Customer.class, id);
 			session.beginTransaction();
 			if (cust != null) {
-				session.delete(cust);
+				cust.setStatus('I');
+				session.saveOrUpdate(cust);
+				session.getTransaction().commit();
+				System.out.println("Deleted successfully customer Id:" + id);
 				return true;
 			} else {
 				System.out.println("Customer details not found!");
 			}
-			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			System.out.println("Hibernate exception is: " + e);
 		} catch (Exception e) {
@@ -112,7 +114,5 @@ public class CustomerDaoimpl implements CustomerDAO {
 		return null;
 
 	}
-
-
 
 }

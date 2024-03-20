@@ -1,7 +1,10 @@
 package com.fooddelivery.daoimpl;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Scanner;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -51,19 +54,21 @@ public class EmployeeDaoImpl implements EmployeeDAO {
 		}
 		return null;
 	}
+	
+	
 
-	public boolean updateEmployee(int empId, String name, LocalDate dateOfJoined, long salary, String mobile) {
+	public boolean updateEmployee(int empId, String name, LocalDate dateOfJoined, float salary, String mobile) {
 		try (Session session = Hibernateutil.getSession()) {
+			session.beginTransaction();
 			Employee existemp = session.load(Employee.class, empId);
 			if (existemp != null) { // update existing details with the new one
-			existemp.setempId(existemp.getempId());
-			existemp.setname(existemp.getname());
-			existemp.setdateOfJoined(existemp.getdateOfJoined());
-			existemp.setmobile(existemp.getmobile());
-			existemp.setsalary(existemp.getsalary());
-
-			session.beginTransaction();
-			session.saveOrUpdate(existemp);
+			existemp.setempId(empId);
+			existemp.setname(name);
+			existemp.setdateOfJoined(dateOfJoined);
+			existemp.setsalary(salary);
+			existemp.setmobile(mobile);
+			
+			session.update(existemp);
 			session.getTransaction().commit();
 			System.out.println("Employee with ID " + empId + " updated successfully.");
 			return true;
@@ -84,7 +89,8 @@ public class EmployeeDaoImpl implements EmployeeDAO {
 			Employee emp = session.get(Employee.class, id);
 			session.beginTransaction();
 			if (emp != null) {
-				session.delete(emp);
+				emp.setStatus('I');
+				session.saveOrUpdate(emp);
 			} else {
 				System.out.println("Employee details not found!");
 			}

@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import com.entity.FoodCategory;
 import com.entity.FoodProduct;
 import com.entity.Orders;
 import com.fooddelivery.dao.FoodProductDAO;
@@ -28,9 +29,14 @@ public class FoodproductDaoimpl implements FoodProductDAO {
 	}
 
 	public List<FoodProduct> findAll() {
+		List<FoodProduct> foodproduct = null;
 		try (Session session = Hibernateutil.getSession()) {
-			List<FoodProduct> Foodproduct = session.createQuery("from Foodproduct", FoodProduct.class).getResultList();
-			return Foodproduct;
+			session.beginTransaction();
+			 foodproduct = session.createQuery("from FoodProduct", FoodProduct.class).getResultList();
+			session.getTransaction().commit();
+			System.out.println("Foodproduct detailes retrieved successfully");
+			return foodproduct;
+			
 		} catch (HibernateException e) {
 			System.out.println("Hibernate exception is: " + e);
 		} catch (Exception e) {
@@ -51,20 +57,50 @@ public class FoodproductDaoimpl implements FoodProductDAO {
 		return null;
 	}
 
-	
+	public List<FoodProduct> getFoodProductsBycategoryId(int categoryId) {
 
-	public boolean updateFoodProductById(int id, FoodProduct foodProduct) {
 		try (Session session = Hibernateutil.getSession()) {
-			FoodProduct existFoodproduct = session.load(FoodProduct.class, id);
-			// update existing details with the new one
-			existFoodproduct.setfoodProductId(foodProduct.getfoodProductId());
-			existFoodproduct.setproductName(foodProduct.getproductName());
-			existFoodproduct.setprice(foodProduct.getprice());
-
 			session.beginTransaction();
-			session.saveOrUpdate(existFoodproduct);
+
+			// Create a native SQL query
+			String sqlQuery = "SELECT * FROM FoodProduct WHERE foodProductId = :foodCategoryId ";
+
+			List<FoodProduct> foodProducts = session.createNativeQuery(sqlQuery, FoodProduct.class)
+					.setParameter("foodCategoryId", categoryId).getResultList();
+
 			session.getTransaction().commit();
-			return true;
+
+			return foodProducts;
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	public boolean updateFoodProductById(int foodProductId, String productName, int price, FoodCategory foodCategory) {
+		FoodProduct existFoodproduct = null;
+		try (Session session = Hibernateutil.getSession()) {
+			session.beginTransaction();
+			existFoodproduct = session.load(FoodProduct.class, foodProductId);
+			//
+			if (existFoodproduct != null) {
+				existFoodproduct.setfoodProductId(foodProductId);
+				existFoodproduct.setproductName(productName);
+				existFoodproduct.setprice(price);
+
+				existFoodproduct.setFoodCategory(foodCategory);
+
+		
+				session.update(existFoodproduct);
+				session.getTransaction().commit();
+				System.out.println("ProductId with ID " + foodProductId + " updated successfully.");
+				return true;
+			} else {
+				System.out.println("ProductId with ID " + foodProductId + " does not exist.");
+			}
 		} catch (HibernateException e) {
 			System.out.println("Hibernate exception is: " + e);
 		} catch (Exception e) {
@@ -75,10 +111,11 @@ public class FoodproductDaoimpl implements FoodProductDAO {
 
 	public boolean removeFoodprodById(int id) {
 		try (Session session = Hibernateutil.getSession()) {
-			FoodProduct cust = session.get(FoodProduct.class, id);
+			FoodProduct product = session.get(FoodProduct.class, id);
 			session.beginTransaction();
-			if (cust != null) {
-				session.delete(cust);
+			if (product != null) {
+				product.setStatus('I');
+				session.saveOrUpdate(product);
 			} else {
 				System.out.println("existFoodproduct details not found!");
 			}
@@ -92,18 +129,4 @@ public class FoodproductDaoimpl implements FoodProductDAO {
 		return false;
 	}
 
-	public List<FoodProduct> findfoodProductBycategoryname(String categoryname) {
-		try (Session session = Hibernateutil.getSession()) {
-			session.beginTransaction();
-			String sqlQurey = "FoodProduct * FROM Orders WHERE categoryname = : categoryname ";
-			List<FoodProduct> Foodproduct = session.createNativeQuery("from Foodproduct", FoodProduct.class)
-					.setParameter("Categoryname", categoryname).getResultList();
-			return Foodproduct;
-		}catch (HibernateException e) {
-			System.out.println("Hibernate exception is: " + e);
-		} catch (Exception e) {
-			System.out.println("Exception is: " + e);
-		}
-		return null;
-	}
 }
