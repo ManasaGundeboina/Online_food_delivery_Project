@@ -34,7 +34,7 @@ public class EmployeeServiceimpl implements EmployeeService {
 	}
 
 	@Override
-	public boolean updateEmployee(int empId, String name, LocalDate dateOfJoined, long salary, String mobile) {
+	public boolean updateEmployee(int empId, String name, LocalDate dateOfJoined, float salary, String mobile) {
 		return employeedao.updateEmployee(empId, name, dateOfJoined, salary, mobile);
 	}
 

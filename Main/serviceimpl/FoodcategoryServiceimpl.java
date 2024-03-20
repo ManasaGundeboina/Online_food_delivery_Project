@@ -29,10 +29,6 @@ public class FoodcategoryServiceimpl implements FoodcategoryService {
 		return foodcategoryDAO.removeFoodCategoryById(id);
 	}
 
-	@Override
-	public List<FoodProduct> getfoodProductBycategoryname(String categoryname) {
-		return foodcategoryDAO.getfoodProductBycategoryname(categoryname);
-	}
 
 	@Override
 	public boolean updateFoodCategory(int id, String FoodCategory) {

@@ -1,7 +1,10 @@
 package com.serviceimpl;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import com.entity.Customer;
+import com.entity.Employee;
 import com.entity.Orders;
 import com.fooddelivery.dao.OrderDAO;
 import com.fooddelivery.daoimpl.OrderDaoimpl;
@@ -23,8 +26,8 @@ public class OrderServiceimpl implements OrderService {
 		return orderDAO.findOrderByID(id);
 	}
 
-	public boolean updateOrderById(int id, Orders order) {
-		return orderDAO.updateOrderById(id, order);
+	public boolean updateOrderById(int orderId, LocalDate orderdate, int amount, String status, Employee employee,	Customer customer) {
+		 return orderDAO.updateOrderById(orderId, orderdate, amount, status, employee, customer);
 	}
 
 	public boolean removeOrderById(int id) {
@@ -32,12 +35,12 @@ public class OrderServiceimpl implements OrderService {
 	}
 
 	@Override
-	public List<Orders> findorderByempID(int empId) {
-		return orderDAO.findorderByempID(empId);
+	public List<Orders> findorderByempId(int empId) {
+		return orderDAO.findorderByempId(empId);
 	}
 
 	@Override
-	public List<Orders> findorderBycustID(int custId) {
-		return orderDAO.findorderBycustID(custId);
+	public List<Orders> findorderBycustId(int custId) {
+		return orderDAO.findorderBycustId(custId);
 	}
 }

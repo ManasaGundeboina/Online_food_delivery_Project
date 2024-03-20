@@ -2,6 +2,7 @@ package com.serviceimpl;
 
 import java.util.List;
 
+import com.entity.FoodCategory;
 import com.entity.FoodProduct;
 import com.fooddelivery.dao.FoodProductDAO;
 import com.fooddelivery.daoimpl.FoodproductDaoimpl;
@@ -24,12 +25,19 @@ public class FoodprodServiceimpl implements FoodprodService {
 		return foodProductDAO.findFoodProductById(id);
 	}
 
-	public boolean updateFoodProductById(int id, FoodProduct FoodProduct) {
-		return foodProductDAO.updateFoodProductById(id, FoodProduct);
-	}
-
+	
 	public boolean removeFoodprodById(int id) {
 		return foodProductDAO.removeFoodprodById(id);
+	}
+
+	@Override
+	public boolean updateFoodProductById(int foodProductId, String productName, int price, FoodCategory foodCategory) {
+		return foodProductDAO.updateFoodProductById(foodProductId, productName, price, foodCategory);
+	}
+
+	@Override
+	public List<FoodProduct> getFoodProductsBycategoryId(int categoryId) {
+		return foodProductDAO.getFoodProductsBycategoryId(categoryId);
 	}
 
 	

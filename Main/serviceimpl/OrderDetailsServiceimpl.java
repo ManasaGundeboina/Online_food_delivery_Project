@@ -2,7 +2,9 @@ package com.serviceimpl;
 
 import java.util.List;
 
+import com.entity.FoodProduct;
 import com.entity.OrderDetails;
+import com.entity.Orders;
 import com.fooddelivery.dao.OrderDetailsDAO;
 import com.fooddelivery.daoimpl.OrderdetailsDaoimpl;
 import com.service.OrderdetailsService;
@@ -23,8 +25,9 @@ public class OrderDetailsServiceimpl implements OrderdetailsService {
 		return orderdetailsDAO.findeorderDetailsById(id);
 	}
 
-	public boolean updateOrderDetailsById(int id, OrderDetails orderdetails) {
-		return orderdetailsDAO.updateOrderDetailsById(id, orderdetails);
+	public boolean updateOrderDetailsById(int orderDetailsId, int quantity, Orders order, FoodProduct foodProduct) {
+		return orderdetailsDAO.updateOrderDetailsById(orderDetailsId, quantity, order, foodProduct);
+		
 	}
 
 	public boolean removeOrderDetailsById(int id) {
@@ -32,13 +35,14 @@ public class OrderDetailsServiceimpl implements OrderdetailsService {
 	}
 
 	@Override
-	public List<OrderDetails> findeorderDetailsByOrderId(int orderId) {
-		return orderdetailsDAO.findeorderDetailsByOrderId(orderId);
+	public List<OrderDetails> findorderDetailsByordersId(int orderId) {
+		return orderdetailsDAO.findorderDetailsByordersId(orderId);
 	}
 
 	@Override
-	public List<OrderDetails> findeorderDetailsByProductName(String productName) {
-		return orderdetailsDAO.findeorderDetailsByProductName(productName);
+	public List<OrderDetails> findorderDetailsByfoodProductsId(int foodProductId) {
+		return orderdetailsDAO.findorderDetailsByfoodProductsId(foodProductId);
+		
 	}
 
 }
