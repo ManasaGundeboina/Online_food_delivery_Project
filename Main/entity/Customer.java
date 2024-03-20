@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ColumnDefault;
+
 @Entity
 @Table(name = "Customer")
 public class Customer {
@@ -19,6 +21,9 @@ public class Customer {
 
 	private String mobileNo;
 
+	@ColumnDefault("'A'")
+	private char status;
+
 	public Customer() {
 	}
 
@@ -28,6 +33,15 @@ public class Customer {
 		this.custName = custName;
 		this.address = address;
 		this.mobileNo = mobileNo;
+	}
+
+	public Customer(int custId, String custName, String address, String mobileNo, char status) {
+		super();
+		this.custId = custId;
+		this.custName = custName;
+		this.address = address;
+		this.mobileNo = mobileNo;
+		this.status = status;
 	}
 
 	public int getCustId() {
@@ -62,10 +76,18 @@ public class Customer {
 		this.mobileNo = mobileNo;
 	}
 
+	public char getStatus() {
+		return status;
+	}
+
+	public void setStatus(char status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
 		return "Customer [custId=" + custId + ", custName=" + custName + ", address=" + address + ", mobileNo="
-				+ mobileNo + "]";
+				+ mobileNo + ", status=" + status + "]";
 	}
 
 }

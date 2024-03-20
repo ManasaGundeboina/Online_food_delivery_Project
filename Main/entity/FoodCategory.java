@@ -2,6 +2,7 @@ package com.entity;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -14,7 +15,17 @@ public class FoodCategory {
 
 	private String categoryName;
 
+	@Column(columnDefinition = "CHAR DEFAULT 'A'")
+	char status;
+
 	public FoodCategory() {
+	}
+
+	public FoodCategory(int foodCategoryId, String categoryName, char status) {
+		super();
+		this.foodCategoryId = foodCategoryId;
+		this.categoryName = categoryName;
+		this.status = status;
 	}
 
 	public FoodCategory(int foodCategoryId, String categoryName) {
@@ -39,9 +50,19 @@ public class FoodCategory {
 		this.categoryName = categoryName;
 	}
 
-	@Override
-	public String toString() {
-		return "FoodCategory [foodCategoryId=" + foodCategoryId + ", categoryName=" + categoryName + "]";
+	public char getStatus() {
+		return status;
 	}
 
+	public void setStatus(char status) {
+		this.status = status;
+	}
+
+	@Override
+	public String toString() {
+		return "FoodCategory [foodCategoryId=" + foodCategoryId + ", categoryName=" + categoryName + ", status="
+				+ status + "]";
+	}
+
+	
 }
