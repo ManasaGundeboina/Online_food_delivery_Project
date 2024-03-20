@@ -14,7 +14,7 @@ public interface EmployeeService {
 	
 	List<Employee> findemployeeByorderID(int orderId);
 
-	boolean updateEmployee(int empId, String name, LocalDate dateOfJoined, long salary, String mobile);
+	boolean updateEmployee(int empId, String name, LocalDate dateOfJoined, float salary, String mobile);
 
 	boolean removeEmployeeById(int id);
 }

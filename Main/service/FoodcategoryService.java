@@ -16,5 +16,4 @@ public interface FoodcategoryService {
 
 	boolean updateFoodCategory(int id, String FoodCategory);
 
-	List<FoodProduct> getfoodProductBycategoryname(String categoryname);
 }

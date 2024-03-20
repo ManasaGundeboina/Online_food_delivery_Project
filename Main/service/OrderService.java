@@ -1,7 +1,10 @@
 package com.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import com.entity.Customer;
+import com.entity.Employee;
 import com.entity.Orders;
 
 public interface OrderService {
@@ -10,12 +13,13 @@ public interface OrderService {
 	List<Orders> findAll();
 
 	Orders findOrderByID(int id);
-	
-	public List<Orders> findorderByempID(int empId);
 
-	public List<Orders> findorderBycustID(int custId);
+	List<Orders> findorderByempId(int empId);
 
-	boolean updateOrderById(int id, Orders order);
+	List<Orders> findorderBycustId(int custId);
+
+	boolean updateOrderById(int orderId, LocalDate orderdate, int amount, String status, Employee employee,
+			Customer customer);
 
 	boolean removeOrderById(int id);
 }
